@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jugo.Juice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="images/download.png" class="icon">
+    <style>
+        .object-cover {
+            object-fit: none;
+        }
+        /* News ticker styles */
+        .news-ticker {
+            background-color: #f8f9fa;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .news-ticker-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker 30s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        .news-ticker:hover .news-ticker-content {
+            animation-play-state: paused;
+        }
+        
+        /* Carousel styles */
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+        }
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.5);
+            color: #333;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .carousel-control.prev {
+            left: 15px;
+        }
+        .carousel-control.next {
+            right: 15px;
+        }
+        .carousel-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        .carousel-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+        .carousel-indicator.active {
+            background: white;
+        }
+        @media (max-width: 768px) {
+            .carousel {
+                height: 300px;
+            }
+        }
+        
+        /* Footer styles */
+        .footer {
+            background-color: #2d3748;
+            color: white;
+            padding: 2rem 0;
+        }
+        .footer a:hover {
+            color: #48bb78;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 font-sans flex flex-col min-h-screen">
+    <!-- News Ticker -->
+    <div class="news-ticker">
+        <div class="news-ticker-content">
+            <span class="font-semibold text-green-600">Latest News: </span>
+            🚚 Free delivery on orders over $50! 🍏 New seasonal fruits arriving this week! 🎁 Special discount for first-time customers! 🍹 Try our new tropical juice blend!
+        </div>
+    </div>
+
+    <header class="bg-green-600 text-white p-4">
+        <h1 class="text-2xl font-bold">
+            Enjoy our handpicked fruits and freshly squeezed juices
+        </h1>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-4 flex-grow">
+        <!-- Carousel Section -->
+        <section class="mb-8">
+            <div class="carousel">
+                <div class="carousel-inner">
+                    <!-- Carousel items will be added dynamically -->
+                </div>
+                <button class="carousel-control prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-control next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="carousel-indicators"></div>
+            </div>
+        </section>
+
+        <!-- Fruits Catalog -->
+        <section id="catalog" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <h2 class="text-xl font-semibold col-span-full">Our Products</h2>
+            <!-- Fruit items will be dynamically added here -->
+        </section>
+
+        <!-- Cart Section -->
+        <section id="cart" class="bg-white p-4 rounded shadow mb-8">
+            <h2 class="text-xl font-semibold mb-4">Your Cart</h2>
+            <div id="cart-items"></div>
+            <p id="cart-total" class="font-bold mt-4">Total: $0.00</p>
+            <button id="checkout-btn" class="bg-green-600 text-white px-4 py-2 rounded mt-4">Proceed to Checkout</button>
+        </section>
+
+        <!-- Customer Details Section -->
+        <section id="customer-details" class="bg-white p-4 rounded shadow mb-8 hidden">
+            <h2 class="text-xl font-semibold mb-4">Customer Details</h2>
+            <div class="mb-4">
+                <label class="block mb-1">Full Name</label>
+                <input type="text" id="customer-name" class="w-full p-2 border rounded" placeholder="Enter your full name" required>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1">Phone Number</label>
+                <input type="tel" id="customer-phone" class="w-full p-2 border rounded" placeholder="Enter your phone number" required>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1">Delivery Address</label>
+                <textarea id="customer-address" class="w-full p-2 border rounded" rows="3" placeholder="Enter your full address with landmarks" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1">City</label>
+                <input type="text" id="customer-city" class="w-full p-2 border rounded" placeholder="Enter your city" required>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1">Pincode</label>
+                <input type="text" id="customer-pincode" class="w-full p-2 border rounded" placeholder="Enter your pincode" required>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-1">Payment Method</label>
+                <div class="mt-2">
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="payment-method" value="COD" checked class="form-radio text-green-600">
+                        <span class="ml-2">Cash on Delivery (COD)</span>
+                    </label>
+                </div>
+            </div>
+            <button id="place-order-btn" class="bg-green-600 text-white px-4 py-2 rounded">Place Order</button>
+        </section>
+
+        <!-- Order Confirmation and Tracking -->
+        <section id="order-confirmation" class="bg-white p-4 rounded shadow mb-8 hidden">
+            <h2 class="text-xl font-semibold mb-4">Order Confirmation</h2>
+            <p id="order-id" class="mb-2 font-bold"></p>
+            <div class="bg-gray-50 p-4 rounded mb-4">
+                <h3 class="text-lg font-semibold mb-2">Customer Details</h3>
+                <p id="confirmation-name" class="mb-1"></p>
+                <p id="confirmation-phone" class="mb-1"></p>
+                <p id="confirmation-address" class="mb-1"></p>
+                <p id="confirmation-city" class="mb-1"></p>
+                <p id="confirmation-pincode"></p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded mb-4">
+                <h3 class="text-lg font-semibold mb-2">Order Summary</h3>
+                <div id="confirmation-items" class="mb-2"></div>
+                <p id="confirmation-total" class="font-bold"></p>
+                <p class="text-green-600 font-semibold mt-2">Payment Method: Cash on Delivery</p>
+            </div>
+            <p class="mb-4">Thank you for your order! You'll receive a confirmation call soon.</p>
+            <h3 class="text-lg font-semibold mb-2">Track Your Shipment</h3>
+            <div id="tracking-status" class="mb-4"></div>
+            <button id="track-btn" class="bg-green-600 text-white px-4 py-2 rounded">Update Tracking Status</button>
+        </section>
+    </main>
+
+    <!-- Footer with Contact Information -->
+    <footer class="footer">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Jugo.Juice</h3>
+                    <p>Fresh fruits and juices delivered to your doorstep</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-green-400">Home</a></li>
+                        <li><a href="#" class="hover:text-green-400">Products</a></li>
+                        <li><a href="#" class="hover:text-green-400">About Us</a></li>
+                        <li><a href="#" class="hover:text-green-400">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Customer Service</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-2"></i>
+                            <a href="tel:+919876543210" class="hover:text-green-400">+91 98765 43210</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-2"></i>
+                            <a href="mailto:customercare@jugojuice.com" class="hover:text-green-400">customercare@jugojuice.com</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock mr-2"></i>
+                            <span>9:00 AM - 8:00 PM (Mon-Sat)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p>&copy; 2023 Jugo.Juice. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample fruit data with discounts
+        const fruits = [
+             { id: 1, name: 'Apple(1kg)', price: 199, discount: 15, image: '../images/apple.jfif' },
+            { id: 2, name: 'Banana', price: 0.30, discount: 5, image: '../images/banana.jfif' },
+            { id: 3, name: 'Orange', price: 0.60, discount: 15, image: '../images/orange.jfif' },
+            { id: 4, name: 'Black-Grapes', price: 0.50, discount: 5, image: '../images/grapes.jfif' },
+            { id: 5, name: 'Water melon', price: 0.30, discount: 5, image: '../images/water melon.jfif' },
+            { id: 6, name: 'Mango', price: 0.60, discount: 0, image: '../images/Mango.jfif' },
+            { id: 7, name: 'Green-Apple(1kg)', price: 0.50, discount: 10, image: '../images/green-apple.jfif' },
+            { id: 8, name: 'Pineapple', price: 0.30, discount: 0, image: '../images/pineapple.jfif' },
+            { id: 9, name: 'Promogranate', price: 0.60, discount: 20, image: '../images/promogranate.jfif' },
+            { id: 10, name: 'Kiwi', price: 0.50, discount: 0, image: '../images/kiwi.jfif' },
+            { id: 11, name: 'Guva', price: 0.30, discount: 0, image: '../images/guva.jfif' },
+            { id: 12, name: 'Draganfruit', price: 0.60, discount: 10, image: '../images/dragon.jfif' },
+            { id: 13, name: 'Muskmelon', price: 0.50, discount: 0, image: '../images/musk -melon.jfif' },
+            { id: 14, name: 'Sapota(Chiku)', price: 0.30, discount: 0, image: '../images/sapota.jfif' },
+            { id: 15, name: 'Strawberry', price: 0.60, discount: 15, image: '../images/strawberry.jfif' },
+            { id: 16, name: 'Grapes', price: 0.50, discount: 0, image: '../images/white-grapes.jfif' },
+            { id: 17, name: 'Cherry', price: 0.30, discount: 0, image: '../images/berry.jfif' },
+            { id: 18, name: 'Avacado', price: 0.60, discount: 10, image: '../images/avacado.jfif' },
+            { id: 19, name: 'Water Melon Juice', price: 0.50, discount: 0, image: '../images/water_melon juice.jfif' },
+            { id: 20, name: 'Pineapple Juice', price: 0.30, discount: 0, image: '../images/pine_apple-juice.jfif' },
+            { id: 21, name: 'Banana Juice', price: 0.60, discount: 5, image: '../images/banana.juice' },
+            { id: 22, name: 'Grapes Juice', price: 0.50, discount: 0, image: '../images/grapes.juice.jpg' },
+            { id: 23, name: 'Papaya', price: 0.30, discount: 0, image: '../images/papaya.juice.jpg' },
+            { id: 24, name: 'Orange Juice', price: 0.60, discount: 10, image: '../images/orange_juice.jfif' },
+            { id: 25, name: 'Mango Juice', price: 0.50, discount: 0, image: '../images/mango juice.jpg' },
+            { id: 26, name: 'Sapota Juice', price: 0.30, discount: 0, image: '../images/sapota juice.webp' },
+            { id: 27, name: 'MixFruits', price: 0.60, discount: 15, image: '../images/mixfruit.jpg' },
+            { id: 28, name: 'Muskmelon', price: 0.50, discount: 0, image: '../images/musk melon juice.jfif' },
+            { id: 29, name: 'Pine apple Juice', price: 0.30, discount: 0, image: '../images/pine_apple-juice.jfif' },
+            { id: 30, name: 'Strawberry Juice', price: 0.60, discount: 10, image: '../images/strawberry juice.jpg' },
+        ];
+
+        // Featured products for carousel
+        const featuredProducts = [
+            { 
+                image: 'https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+                title: 'Fresh Seasonal Fruits',
+                description: 'Handpicked from local farms'
+            },
+            { 
+                image: 'https://images.unsplash.com/photo-1603569283847-aa295f0d016a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80',
+                title: '100% Natural Juices',
+                description: 'No additives or preservatives'
+            },
+            { 
+                image: 'https://images.unsplash.com/photo-1603569283847-aa295f0d016a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80',
+                title: 'Special Discounts',
+                description: '20% off on first order'
+            },
+            { 
+                image: 'https://images.unsplash.com/photo-1603569283847-aa295f0d016a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80',
+                title: 'Free Delivery',
+                description: 'On orders above $50'
+            }
+        ];
+
+        let cart = [];
+        let currentSlide = 0;
+        let carouselInterval;
+
+        // Initialize carousel
+        function initCarousel() {
+            const carouselInner = document.querySelector('.carousel-inner');
+            const indicators = document.querySelector('.carousel-indicators');
+            
+            featuredProducts.forEach((product, index) => {
+                // Create carousel item
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.innerHTML = `
+                    <img src="${product.image}" alt="${product.title}">
+                    <div class="carousel-caption">
+                        <h3 class="text-2xl font-bold mb-2">${product.title}</h3>
+                        <p class="text-lg">${product.description}</p>
+                    </div>
+                `;
+                carouselInner.appendChild(item);
+                
+                // Create indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'carousel-indicator';
+                if (index === 0) indicator.classList.add('active');
+                indicator.addEventListener('click', () => goToSlide(index));
+                indicators.appendChild(indicator);
+            });
+            
+            // Set up controls
+            document.querySelector('.carousel-control.prev').addEventListener('click', prevSlide);
+            document.querySelector('.carousel-control.next').addEventListener('click', nextSlide);
+            
+            // Start auto-rotation
+            startCarousel();
+            
+            // Pause on hover
+            const carousel = document.querySelector('.carousel');
+            carousel.addEventListener('mouseenter', pauseCarousel);
+            carousel.addEventListener('mouseleave', startCarousel);
+        }
+        
+        // Carousel navigation functions
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+        }
+        
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + featuredProducts.length) % featuredProducts.length;
+            updateCarousel();
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % featuredProducts.length;
+            updateCarousel();
+        }
+        
+        function updateCarousel() {
+            const carouselInner = document.querySelector('.carousel-inner');
+            carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            // Update indicators
+            const indicators = document.querySelectorAll('.carousel-indicator');
+            indicators.forEach((indicator, index) => {
+                if (index === currentSlide) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+            
+            // Reset timer
+            resetCarouselTimer();
+        }
+        
+        function startCarousel() {
+            carouselInterval = setInterval(nextSlide, 5000);
+        }
+        
+        function pauseCarousel() {
+            clearInterval(carouselInterval);
+        }
+        
+        function resetCarouselTimer() {
+            pauseCarousel();
+            startCarousel();
+        }
+
+        // Calculate discounted price
+        function getDiscountedPrice(price, discount) {
+            return discount > 0 ? price * (1 - discount / 100) : price;
+        }
+
+        // Initialize catalog
+        function initCatalog() {
+            const catalog = document.getElementById('catalog');
+            fruits.forEach(fruit => {
+                const discountedPrice = getDiscountedPrice(fruit.price, fruit.discount);
+                const fruitCard = document.createElement('div');
+                fruitCard.className = 'bg-white p-4 rounded shadow';
+                fruitCard.innerHTML = `
+                    <img src="${fruit.image}" alt="${fruit.name}" class="w-full h-32 object-cover rounded mb-2">
+                    <h3 class="text-lg font-semibold">${fruit.name}</h3>
+                    <p class="text-gray-600">
+                        ${fruit.discount > 0 ? `<span class="line-through text-gray-400">$${fruit.price.toFixed(2)}</span> <span class="text-red-500">${fruit.discount}% OFF</span> ` : ''}
+                        $${discountedPrice.toFixed(2)} each
+                    </p>
+                    <button onclick="addToCart(${fruit.id})" class="bg-green-600 text-white px-4 py-2 rounded mt-2">Add to Cart</button>
+                `;
+                catalog.appendChild(fruitCard);
+            });
+        }
+
+        // Add to cart
+        function addToCart(fruitId) {
+            const fruit = fruits.find(f => f.id === fruitId);
+            const cartItem = cart.find(item => item.id === fruitId);
+            if (cartItem) {
+                cartItem.quantity++;
+            } else {
+                cart.push({ ...fruit, quantity: 1, discountedPrice: getDiscountedPrice(fruit.price, fruit.discount) });
+            }
+            updateCart();
+        }
+
+        // Remove from cart
+        function removeFromCart(fruitId) {
+            const cartItem = cart.find(item => item.id === fruitId);
+            if (cartItem) {
+                cartItem.quantity--;
+                if (cartItem.quantity === 0) {
+                    cart = cart.filter(item => item.id !== fruitId);
+                }
+            }
+            updateCart();
+        }
+
+        // Update cart display
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                total += item.discountedPrice * item.quantity;
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex justify-between items-center mb-2';
+                itemDiv.innerHTML = `
+                    <span>${item.name} (x${item.quantity})</span>
+                    <div>
+                        <button onclick="addToCart(${item.id})" class="bg-green-600 text-white px-2 py-1 rounded">+</button>
+                        <button onclick="removeFromCart(${item.id})" class="bg-red-600 text-white px-2 py-1 rounded">-</button>
+                    </div>
+                `;
+                cartItems.appendChild(itemDiv);
+            });
+            document.getElementById('cart-total').textContent = `Total: $${total.toFixed(2)}`;
+            document.getElementById('checkout-btn').disabled = cart.length === 0;
+        }
+
+        // Function to send WhatsApp message with order details
+        function sendWhatsAppOrder(orderId, total, customerDetails) {
+            // Format the cart items for the message
+            let itemsText = cart.map(item => 
+                `${item.name} (x${item.quantity}) - $${(item.discountedPrice * item.quantity).toFixed(2)}`
+            ).join('%0A'); // %0A is URL-encoded newline
+            
+            // Format customer details
+            const customerText = `Customer: ${customerDetails.name}%0APhone: ${customerDetails.phone}%0AAddress: ${customerDetails.address}%0ACity: ${customerDetails.city}%0APincode: ${customerDetails.pincode}`;
+            
+            // Create the WhatsApp message
+            const phoneNumber = '917095973271'; // The number you want to send to
+            const message = `New Order Received!%0A%0AOrder ID: ${orderId}%0A%0A${customerText}%0A%0AItems:%0A${itemsText}%0A%0ATotal: $${total.toFixed(2)}%0APayment Method: Cash on Delivery`;
+            
+            // Open WhatsApp with the message
+            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        }
+
+        // Checkout
+        document.getElementById('checkout-btn').addEventListener('click', () => {
+            document.getElementById('catalog').classList.add('hidden');
+            document.getElementById('cart').classList.add('hidden');
+            document.getElementById('customer-details').classList.remove('hidden');
+        });
+
+        // Place order
+        document.getElementById('place-order-btn').addEventListener('click', () => {
+            // Get customer details
+            const customerDetails = {
+                name: document.getElementById('customer-name').value,
+                phone: document.getElementById('customer-phone').value,
+                address: document.getElementById('customer-address').value,
+                city: document.getElementById('customer-city').value,
+                pincode: document.getElementById('customer-pincode').value
+            };
+
+            // Validate inputs
+            if (!customerDetails.name || !customerDetails.phone || !customerDetails.address || !customerDetails.city || !customerDetails.pincode) {
+                alert('Please fill in all customer details');
+                return;
+            }
+
+            // Calculate total
+            let total = 0;
+            cart.forEach(item => {
+                total += item.discountedPrice * item.quantity;
+            });
+
+            // Generate order ID
+            const orderId = 'ORD' + Math.floor(Math.random() * 1000000);
+            
+            // Send order details via WhatsApp
+            sendWhatsAppOrder(orderId, total, customerDetails);
+            
+            // Hide customer details and show confirmation
+            document.getElementById('customer-details').classList.add('hidden');
+            
+            // Display order confirmation
+            document.getElementById('order-confirmation').classList.remove('hidden');
+            document.getElementById('order-id').textContent = `Order ID: ${orderId}`;
+            
+            // Display customer details
+            document.getElementById('confirmation-name').textContent = `Name: ${customerDetails.name}`;
+            document.getElementById('confirmation-phone').textContent = `Phone: ${customerDetails.phone}`;
+            document.getElementById('confirmation-address').textContent = `Address: ${customerDetails.address}`;
+            document.getElementById('confirmation-city').textContent = `City: ${customerDetails.city}`;
+            document.getElementById('confirmation-pincode').textContent = `Pincode: ${customerDetails.pincode}`;
+            
+            // Display order items
+            const confirmationItems = document.getElementById('confirmation-items');
+            confirmationItems.innerHTML = '';
+            cart.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex justify-between';
+                itemDiv.innerHTML = `
+                    <span>${item.name} (x${item.quantity})</span>
+                    <span>$${(item.discountedPrice * item.quantity).toFixed(2)}</span>
+                `;
+                confirmationItems.appendChild(itemDiv);
+            });
+            
+            // Display total
+            document.getElementById('confirmation-total').textContent = `Total: $${total.toFixed(2)}`;
+            
+            // Initialize tracking
+            initTracking();
+        });
+
+        // Simulated shipment tracking
+        let trackingStage = 0;
+        const trackingStages = [
+            'Order Confirmed',
+            'Processing in Warehouse',
+            'Shipped',
+            'Out for Delivery',
+            'Delivered'
+        ];
+
+        function initTracking() {
+            updateTrackingStatus();
+            document.getElementById('track-btn').addEventListener('click', () => {
+                if (trackingStage < trackingStages.length - 1) {
+                    trackingStage++;
+                    updateTrackingStatus();
+                }
+            });
+        }
+
+        function updateTrackingStatus() {
+            const trackingStatus = document.getElementById('tracking-status');
+            trackingStatus.textContent = `Current Status: ${trackingStages[trackingStage]}`;
+            if (trackingStage === trackingStages.length - 1) {
+                document.getElementById('track-btn').disabled = true;
+            }
+        }
+
+        // Initialize the page
+        initCarousel();
+        initCatalog();
+        updateCart();
+    </script>
+</body>
+</html>
