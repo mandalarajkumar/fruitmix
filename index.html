@@ -107,11 +107,6 @@
         .carousel-indicator.active {
             background: white;
         }
-        @media (max-width: 768px) {
-            .carousel {
-                height: 300px;
-            }
-        }
         
         /* Footer styles */
         .footer {
@@ -121,6 +116,122 @@
         }
         .footer a:hover {
             color: #48bb78;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .carousel-caption h3 {
+                font-size: 1.5rem;
+            }
+            .carousel-caption p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .carousel {
+                height: 350px;
+            }
+            #catalog {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carousel {
+                height: 300px;
+            }
+            .carousel-caption {
+                padding: 10px;
+            }
+            .carousel-caption h3 {
+                font-size: 1.2rem;
+                margin-bottom: 5px;
+            }
+            .carousel-caption p {
+                font-size: 0.8rem;
+            }
+            .carousel-control {
+                width: 30px;
+                height: 30px;
+                padding: 5px;
+            }
+            .news-ticker-content {
+                animation: ticker 20s linear infinite;
+            }
+            .footer .grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            #customer-details input,
+            #customer-details textarea {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .carousel {
+                height: 250px;
+                border-radius: 0;
+            }
+            #catalog {
+                grid-template-columns: 1fr;
+            }
+            .carousel-caption h3 {
+                font-size: 1rem;
+            }
+            .carousel-caption p {
+                display: none;
+            }
+            .carousel-indicators {
+                bottom: 10px;
+            }
+            .carousel-indicator {
+                width: 8px;
+                height: 8px;
+            }
+            header h1 {
+                font-size: 1.3rem;
+            }
+            #cart, #customer-details, #order-confirmation {
+                padding: 15px;
+            }
+            .news-ticker {
+                font-size: 0.8rem;
+                padding: 5px 0;
+            }
+            .footer {
+                padding: 1.5rem 0;
+            }
+            .footer h3 {
+                font-size: 1.1rem;
+            }
+            #checkout-btn, #place-order-btn, #track-btn {
+                width: 100%;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .carousel {
+                height: 200px;
+            }
+            .carousel-caption h3 {
+                font-size: 0.9rem;
+            }
+            .news-ticker {
+                font-size: 0.7rem;
+            }
+            .fruit-card h3 {
+                font-size: 0.9rem;
+            }
+            .fruit-card p {
+                font-size: 0.8rem;
+            }
+            .fruit-card button {
+                font-size: 0.8rem;
+                padding: 5px 10px;
+            }
         }
     </style>
 </head>
@@ -275,7 +386,7 @@
     <script>
         // Sample fruit data with discounts
         const fruits = [
-             { id: 1, name: 'Apple(1kg)', price: 199, discount: 15, image: 'images/download.png' },
+            { id: 1, name: 'Apple(1kg)', price: 199, discount: 15, image: '../images/apple.jfif' },
             { id: 2, name: 'Banana', price: 0.30, discount: 5, image: '../images/banana.jfif' },
             { id: 3, name: 'Orange', price: 0.60, discount: 15, image: '../images/orange.jfif' },
             { id: 4, name: 'Black-Grapes', price: 0.50, discount: 5, image: '../images/grapes.jfif' },
@@ -432,7 +543,7 @@
             fruits.forEach(fruit => {
                 const discountedPrice = getDiscountedPrice(fruit.price, fruit.discount);
                 const fruitCard = document.createElement('div');
-                fruitCard.className = 'bg-white p-4 rounded shadow';
+                fruitCard.className = 'bg-white p-4 rounded shadow fruit-card';
                 fruitCard.innerHTML = `
                     <img src="${fruit.image}" alt="${fruit.name}" class="w-full h-32 object-cover rounded mb-2">
                     <h3 class="text-lg font-semibold">${fruit.name}</h3>
